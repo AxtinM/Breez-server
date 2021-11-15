@@ -1,0 +1,43 @@
+{
+  "name": "breez",
+  "version": "1.2.4",
+  "description": "A customisable rocker switch component for Vue.js",
+  "keywords": [
+    "vue",
+    "rocker",
+    "switch",
+    "vue-rocker",
+    "vue-rocker-switch",
+    "light-rocker-switch",
+    "light-switcher"
+  ],
+  "license": "MIT",
+  "bugs": "https://github.com/DannyFeliz/vue-rocker-switch/issues/new",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DannyFeliz/vue-rocker-switch"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "bundle": "vue-cli-service build --target lib --name front-end ./src/components/RockerSwitch.vue",
+    "lint": "vue-cli-service lint",
+    "publish": "npm publish --access public"
+  },
+  "dependencies": {
+    "color-string": "^1.5.3",
+    "vue": "^2.5.21",
+    "vue-rocker-switch": "^1.2.4"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^3.2.0",
+    "@vue/cli-plugin-eslint": "^3.2.0",
+    "@vue/cli-service": "^3.2.0",
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.8.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "node-sass": "^4.9.0",
+    "sass-loader": "^7.0.1",
+    "vue-template-compiler": "^2.5.21"
+  }
+}

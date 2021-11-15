@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+// for use for another time
+
 const deviceSchema = new mongoose.Schema({
   client_id: {
     type: String,
