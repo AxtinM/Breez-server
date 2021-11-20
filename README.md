@@ -1,6 +1,6 @@
 # Breez
 
-[![](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/qvw4o1k24)
+
 
 ### Resumé Technique :
 
