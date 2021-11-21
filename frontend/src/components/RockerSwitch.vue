@@ -1,19 +1,11 @@
 <template>
   <div class="rocker-switch-container">
     <label class="rocker" :style="this.rockerSize" @click.prevent="">
-      <input
-        type="checkbox"
-        v-model="isChecked"
-        ref="switch"
-        v-bind="$attrs">
-      <span
-        class="switch-left"
-        @click="changeState(true, $event)">
+      <input type="checkbox" v-model="isChecked" ref="switch" v-bind="$attrs" />
+      <span class="switch-left" @click="changeState(true, $event)">
         <span>{{ labelOn }}</span>
       </span>
-      <span
-        class="switch-right"
-        @click="changeState(false, $event)">
+      <span class="switch-right" @click="changeState(false, $event)">
         <span>{{ labelOff }}</span>
       </span>
     </label>
@@ -21,14 +13,14 @@
 </template>
 
 <script>
-import { isColorValid }  from '../utils/helpers';
+import { isColorValid } from "../utils/helpers";
 
 export default {
   name: "RockerSwitch",
   props: {
     value: {
       type: Boolean,
-      default: false
+      default: false,
     },
     size: {
       type: [String, Number],
@@ -39,15 +31,15 @@ export default {
             size.toString().toLowerCase()
           ) || typeof size === "number"
         );
-      }
+      },
     },
     labelOn: {
       type: [String, Number],
-      default: "On"
+      default: "On",
     },
     labelOff: {
       type: [String, Number],
-      default: "Off"
+      default: "Off",
     },
     activeColorLabel: {
       type: String,
@@ -76,8 +68,8 @@ export default {
     },
     toggle: {
       type: Boolean,
-      default: true
-    }
+      default: true,
+    },
   },
   data() {
     return {
@@ -85,8 +77,8 @@ export default {
       sizes: {
         small: 0.5,
         medium: 0.8,
-        large: 0.9
-      }
+        large: 0.9,
+      },
     };
   },
   computed: {
@@ -97,7 +89,7 @@ export default {
       return {
         fontSize:
           (typeof this.size === "number" ? this.size : this.sizes[this.size]) +
-          "em"
+          "em",
       };
     },
     isDisabled() {
@@ -107,7 +99,7 @@ export default {
           this.$attrs.disabled === ""
         ) || this.$attrs.disabled === true
       );
-    }
+    },
   },
   mounted() {
     this.setUpColors();
@@ -115,12 +107,12 @@ export default {
   watch: {
     value(currentValue, oldValue) {
       if (!this.isDisabled && currentValue != oldValue) {
-          this.isChecked = currentValue;
+        this.isChecked = currentValue;
       }
     },
     isChecked(isOn) {
-        this.$emit("change", isOn);
-    }
+      this.$emit("change", isOn);
+    },
   },
   methods: {
     setUpColors() {
@@ -146,8 +138,9 @@ export default {
         }
         event.preventDefault();
       }
-    }
-  }
+      this.$emit("change-state", this.isChecked);
+    },
+  },
 };
 </script>
 

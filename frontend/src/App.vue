@@ -10,6 +10,7 @@
       background-color-on="green"
       activeColorLabel="yellow"
       @change="(isOn) => (currentValue = isOn)"
+      @change-state="changeState"
     />
   </div>
 </template>
@@ -17,10 +18,6 @@
 <script>
 import Lightbulb from "./components/Lightbulb";
 import RockerSwitch from "./components/RockerSwitch";
-import VueNativeSock from "vue-native-websocket";
-
-Vue.use(VueNativeSock, "ws://localhost:9090");
-
 export default {
   name: "app",
   components: {
@@ -33,9 +30,26 @@ export default {
       connection: null,
     };
   },
+  methods: {
+    sendMessage(msg) {
+      console.log(msg);
+      this.connection.send(msg);
+    },
+    changeState(value) {
+      console.log("value", value);
+      this.sendMessage(value ? "1" : "0");
+    },
+  },
   created() {
-    console.log("connection to websocket server");
-    this.connection = new VueNativeSock("ws://localhost:1883");
+    console.log("connecting to websocket server");
+    this.connection = new WebSocket("ws://localhost:8801/status");
+    this.connection.onmessage = function(event) {
+      console.log(event);
+      this.connection.onopen = function(event) {
+        console.log(event);
+        console.log("started connection on websocket server");
+      };
+    };
   },
 };
 </script>

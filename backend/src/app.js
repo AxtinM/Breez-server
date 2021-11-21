@@ -1,12 +1,11 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+var expressWs = require("express-ws")(app);
 const logger = require("morgan");
 const mqtt = require("mqtt");
 const mqttClient = mqtt.connect("mqtt://localhost:1883");
-// const topic = "#";
 var plug_status = 0;
-
 const port = process.env.PORT;
 
 app.use(logger("dev"));
@@ -26,8 +25,11 @@ mqttClient.subscribe("current/status", (err, granted) => {
   }
 });
 
-mqttClient.publish("current/change", "1");
-mqttClient.on("message", (topic, message) => {
-  plug_status = message.toString();
-  console.log("message from client : " + plug_status + " on " + topic);
+app.ws("/status", (ws, req) => {
+  ws.on("message", (msg) => {
+    console.log("Sent message over MQTT : " + msg);
+    mqttClient.publish("current/change", msg);
+  });
 });
+
+app.listen(port);

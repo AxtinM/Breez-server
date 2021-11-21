@@ -1,10 +1,9 @@
 # Breez
 
-
-
 ### Resumé Technique :
 
-1. Node.Js
-2. Mqtt over Websocket
-3. Vue.Js
-4. ESP8266 Using WIFI Connection
+1. VueJs
+2. Websocket
+3. NodeJs
+4. Mqtt
+5. ESP8266 Using WIFI Connection
