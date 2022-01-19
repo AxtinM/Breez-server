@@ -1,11 +1,12 @@
 <template>
   <div id="app">
+    <h1>Breez</h1>
     <Lightbulb :isOn="currentValue" class="pointer" />
     <div>
       <code>{{ currentValue }}</code>
     </div>
     <RockerSwitch
-      :size="1.2"
+      :size="1.0"
       :value="currentValue"
       background-color-on="green"
       activeColorLabel="yellow"
@@ -55,6 +56,11 @@ export default {
 </script>
 
 <style>
+h1 {
+  font-family: "Ubuntu", sans-serif;
+  text-align: center;
+  margin: 50px 0;
+}
 #app div {
   display: flex;
   justify-content: center;

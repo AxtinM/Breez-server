@@ -2,18 +2,18 @@
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
  
-const char* ssid = "Robotika";
-const char* password =  "Robotika2121";
-const char* mqttServer = "192.168.100.13";
-const int mqttPort = 1883;
+const char* ssid = "micky";
+const char* password =  "12345678";
+const char* mqttServer = "192.168.100.82";
+const int mqttPort = 1882;
 void callback(char* topic, byte* payload, unsigned int length);
 WiFiClient espClient;
 PubSubClient client(espClient);
-int relay = 15;
+// int relay = 3;
 
 void setup() {
   
-  pinMode(relay, OUTPUT);
+  pinMode(D3, OUTPUT);
   Serial.begin(115200);
  
   WiFi.begin(ssid, password);
@@ -43,28 +43,30 @@ void setup() {
     }
   }
  
- 
+
 }
  
 void callback(char* topic, byte* payload, unsigned int length) {
  
   Serial.print("Message arrived in topic: ");
   // Serial.println(topic);
-  digitalWrite(relay, HIGH);
+  digitalWrite(D3, HIGH);
   Serial.println("Current not Flowing");
   
   Serial.print("Message:");
-  for (int i = 0; i < length; i++) {
+  for (unsigned int i = 0; i < length; i++) {
     Serial.print((char)payload[i]);
    }
 
    if (payload[0] == '1'){
-    digitalWrite(relay, HIGH);
+    digitalWrite(D3, HIGH);
+    Serial.println("On");
     client.publish("current/status", "RELAY is ON");
    }
 
    else if (payload[0] == '0'){
-    digitalWrite(relay, LOW);
+    digitalWrite(D3, LOW);
+    Serial.println("Off");
     client.publish("current/status", "RELAY is OFF");
    }
  

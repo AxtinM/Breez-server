@@ -4,7 +4,7 @@ const app = express();
 var expressWs = require("express-ws")(app);
 const logger = require("morgan");
 const mqtt = require("mqtt");
-const mqttClient = mqtt.connect("mqtt://localhost:1883");
+const mqttClient = mqtt.connect("mqtt://localhost:1882");
 var plug_status = 0;
 const port = process.env.PORT;
 
