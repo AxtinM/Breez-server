@@ -1,36 +1,47 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <ESP8266TrueRandom.h>
  
 const char* ssid = "micky";
 const char* password =  "12345678";
-const char* mqttServer = "192.168.100.82";
-const int mqttPort = 1882;
+const char* topic = "B";
+const char* mqttServer = "robotn-cloud-server.robotika.systems";
+const int mqttPort = 1883;
+const char *username = "robotika";
+const char *pass = "robotika";
+
+byte uuidNumber[16];
+
 void callback(char* topic, byte* payload, unsigned int length);
 WiFiClient espClient;
 PubSubClient client(espClient);
-// int relay = 3;
+int relay = 2;
 
 void setup() {
   
-  pinMode(D3, OUTPUT);
-  Serial.begin(115200);
- 
+  pinMode(relay, OUTPUT);
+  Serial.begin(9600);
   WiFi.begin(ssid, password);
  
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    delay(2000);
     Serial.println("Connecting to WiFi..");
   }
   Serial.println("Connected to the WiFi network");
- 
+  
+  ESP8266TrueRandom.uuid(uuidNumber);
+  String uuidStr = ESP8266TrueRandom.uuidToString(uuidNumber);
+  Serial.println("The UUID number is " + uuidStr);
+  const String clientId = "mqttjs_esp" + uuidStr;
+
   client.setServer(mqttServer, mqttPort);
   client.setCallback(callback);
  
   while (!client.connected()) {
     Serial.println("Connecting to MQTT...");
- 
-    if (client.connect("mqttjs_esp")) {
+
+    if (client.connect(clientId.c_str(), username, pass)) {
  
       Serial.println("connected");  
  
@@ -49,9 +60,6 @@ void setup() {
 void callback(char* topic, byte* payload, unsigned int length) {
  
   Serial.print("Message arrived in topic: ");
-  // Serial.println(topic);
-  digitalWrite(D3, HIGH);
-  Serial.println("Current not Flowing");
   
   Serial.print("Message:");
   for (unsigned int i = 0; i < length; i++) {
@@ -59,15 +67,15 @@ void callback(char* topic, byte* payload, unsigned int length) {
    }
 
    if (payload[0] == '1'){
-    digitalWrite(D3, HIGH);
+    digitalWrite(relay, HIGH);
     Serial.println("On");
-    client.publish("current/status", "RELAY is ON");
+    client.publish(topic, "RELAY is ON");
    }
 
    else if (payload[0] == '0'){
-    digitalWrite(D3, LOW);
+    digitalWrite(relay, LOW);
     Serial.println("Off");
-    client.publish("current/status", "RELAY is OFF");
+    client.publish(topic, "RELAY is OFF");
    }
  
   Serial.println();
@@ -77,6 +85,5 @@ void callback(char* topic, byte* payload, unsigned int length) {
  
 void loop() {
   client.loop();
-  client.subscribe("current/change");
-  
+  client.subscribe(topic);
 }
