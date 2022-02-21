@@ -1,55 +1,89 @@
-// function loginController() {
-//   passport.authenticate("auth0", {
-//     scope: "openid email profile",
-//   }),
-//     (req, res) => {
-//       res.redirect("/");
-//     };
-// }
+const User = require("../models/users.model");
+const jwt = require("jsonwebtoken");
 
-// function loginCallbackController(req, res, next) {
-//   passport.authenticate("auth0", (err, user, info) => {
-//     if (err) {
-//       return next(err);
-//     }
-//     if (!user) {
-//       return res.redirect("/login");
-//     }
-//     req.logIn(user, (err) => {
-//       if (err) {
-//         return next(err);
-//       }
-//       const returnTo = req.session.returnTo;
-//       delete req.session.returnTo;
-//       res.redirect(returnTo || "/");
-//     });
-//   })(req, res, next);
-// }
+exports.signUpController = async (req, res) => {
+  const isNewUser = await User.isThisEmailInUse(req.body.email);
+  if (!isNewUser) {
+    return res.send({
+      success: false,
+      message: "this email is already in use try sign-in.",
+    });
+  }
+  try {
+    const user = await User({
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      email: req.body.email,
+      password: req.body.password,
+    });
+    user.save();
+    return res.send({
+      success: true,
+      message: `Created User with email ${user.email} successfully`,
+    });
+  } catch (error) {
+    console.log("Error while Creating User : ", error.message);
+    return res.send({
+      success: false,
+      message: `Error while creating User : ${error.message}`,
+    });
+  }
+};
 
-// function logoutController(req, res) {
-//   // req.logou;
+exports.signInController = async (req, res) => {
+  const { email, password } = req.body;
+  const user = await User.findOne({ email });
+  if (!user)
+    return res.send({
+      success: false,
+      message: "user not found with the given email",
+    });
+  const isMatch = await user.comparePassword(password);
+  if (!isMatch)
+    return res.send({
+      success: false,
+      message: "Email and/or Password must be Correct!",
+    });
 
-//   let returnTo = req.protocol + "://" + req.hostname;
-//   const port = req.connection.localPort;
+  let oldTokens = user.tokens || [];
 
-//   if (port !== undefined && port !== 80 && port !== 443) {
-//     returnTo =
-//       process.env.NODE_ENV === "production"
-//         ? `${returnTo}/`
-//         : `${returnTo}:${port}/`;
-//   }
+  if (oldTokens.length) {
+    oldTokens = oldTokens.filter((token) => {
+      const timeDiff = Date.now() - parseInt(token.signedAt) / 1000;
+      if (timeDiff < 86400) {
+        return token;
+      }
+    });
+  }
 
-//   const logoutURL = new URL(`https://${process.env.AUTH0_DOMAIN}/v2/logout`);
+  const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "1d",
+  });
+  await User.findByIdAndUpdate(user._id, {
+    tokens: [...oldTokens, { token, signedAt: Date.now().toString() }],
+  });
+  res.send({
+    success: true,
+    message: "Logged in successfully",
+    jwt: token,
+  });
+};
 
-//   const searchString = querystring.stringify({
-//     client_id: process.env.AUTH0_CLIENT_ID,
-//     returnTo: returnTo,
-//   });
-//   logoutURL.search = searchString;
+exports.signOutController = async (req, res) => {
+  if (req.headers && req.headers.authorization) {
+    console.log(req.headers.authorization);
+    const token = req.headers.authorization.split(" ")[1];
+    if (!token) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authorization fail!" });
+    }
 
-//   res.redirect(logoutURL);
-// }
+    const tokens = req.user.tokens;
 
-// module.exports = loginController;
-// module.exports = loginCallbackController;
-// module.exports = logoutController;
+    const newTokens = tokens.filter((t) => t.token !== token);
+
+    await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
+    res.json({ success: true, message: "Sign out successfully!" });
+  }
+};

@@ -1,4 +1,5 @@
-import { model, Schema } from "mongoose";
+const mongoose = require("mongoose");
+const { Schema, model } = mongoose;
 
 // for use for another time
 
@@ -21,6 +22,4 @@ const breezSchema = new Schema({
   },
 });
 
-const breezModel = model("Breez", deviceSchema);
-
-export default deviceModel;
+module.exports = model("Breez", breezSchema);

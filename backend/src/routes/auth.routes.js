@@ -1,14 +1,24 @@
-// const express = require("express");
-// const router = express.Router();
-// const passport = require("passport");
-// const querystring = require("querystring");
-// const loginController = require("../controllers/auth.controller");
-// const loginCallbackController = require("../controllers/auth.controller");
-// const logoutController = require("../controllers/auth.controller");
-// require("dotenv").config();
+const express = require("express");
+const router = express.Router();
+const { isAuth } = require("../middleware/auth");
 
-// router.get("/login", loginController());
-// router.get("/callback", loginCallbackController());
-// router.get("/logout", logoutController());
+const {
+  signUpController,
+  signInController,
+  signOutController,
+} = require("../controllers/auth.controller");
+const {
+  validateUserSignUp,
+  validateUserSignIn,
+  userValidation,
+} = require("../middleware/validation/user");
 
-// module.exports = router;
+router.post("/signup", validateUserSignUp, userValidation, signUpController);
+router.post("/signin", validateUserSignIn, userValidation, signInController);
+router.post("/signout", isAuth, signOutController);
+
+// router.post("/create", isAuth, (req, res) => {
+//   res.send(req.user);
+// });
+
+module.exports = router;
