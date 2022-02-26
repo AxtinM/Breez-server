@@ -11,7 +11,6 @@ exports.isAuth = async (req, res, next) => {
       if (!user) {
         return res.json({ success: false, message: "unauthorized access!" });
       }
-
       req.user = user;
       next();
     } catch (error) {
@@ -28,6 +27,7 @@ exports.isAuth = async (req, res, next) => {
       res.res.json({ success: false, message: "Internal server error!" });
     }
   } else {
+    // console.log(req.headers.authorization);
     res.json({ success: false, message: "unauthorized access!" });
   }
 };

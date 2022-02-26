@@ -1,4 +1,5 @@
 const User = require("../models/users.model");
+const mqttClient = require("../services/mqttClient");
 
 module.exports.addDevice = async (req, res) => {
   try {
@@ -22,7 +23,7 @@ module.exports.addDevice = async (req, res) => {
 module.exports.getDevices = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    res.send({ success: true, message: user.devices });
+    res.status(200).send({ success: true, message: user.devices });
   } catch (e) {
     console.log(e);
   }
@@ -31,15 +32,40 @@ module.exports.getDevices = async (req, res) => {
 module.exports.deleteDevice = async (req, res) => {
   try {
     const user = req.user;
-    const response = await user.deleteOne({ mac: req.user.mac });
-    if (response.deletedCount !== 0) {
-      res.send({ success: true, message: "Device Deleted successfully!" });
-    } else {
-      res
-        .status(400)
-        .send({ success: false, message: "Could not delete device." });
-    }
+    User.findOneAndUpdate(
+      { _id: user._id },
+      { $pull: { devices: { mac: req.body.mac } } },
+      (err, result) => {
+        console.log(err, result);
+      }
+    );
+
+    user.save();
+    res.send({ success: true, message: "Device Deleted successfully!" });
   } catch (e) {
-    res.status(400).send({ success: false, message: e });
+    res
+      .status(400)
+      .send({ success: false, message: "Internal Server Error: " + e.message });
+  }
+};
+
+module.exports.changeDeviceStatus = (req, res) => {
+  try {
+    // const user = req.user;
+    const { mac, num } = req.body;
+    console.log("req : ", mac, " - ", num);
+    pubTopic = "change/breez-" + mac;
+
+    if (!mqttClient.publish(pubTopic, num)) {
+      throw new Error("Publishing Unsucceeded!");
+    }
+
+    res.send({
+      success: true,
+      message: "Device Status updated successfully!",
+    });
+  } catch (e) {
+    console.log(e);
+    res.send({ success: false, message: "Internal Server Error: " + e });
   }
 };

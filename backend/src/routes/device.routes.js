@@ -5,10 +5,12 @@ const {
   addDevice,
   getDevices,
   deleteDevice,
+  changeDeviceStatus,
 } = require("../controllers/device.controller");
 
 router.get("/all", isAuth, getDevices);
 router.post("/add", isAuth, addDevice);
-router.delete("/delete", isAuth, deleteDevice);
+router.post("/delete", isAuth, deleteDevice);
+router.post("/status", isAuth, changeDeviceStatus);
 
 module.exports = router;
