@@ -271,9 +271,11 @@ void setup() {
   String clientId = "breez-" + mac;
   Serial.println("Mqtt topic : ");
   Serial.print(clientId);
-
+  Serial.println("\n");
   strcat(subTopic, "change/");
   strcat(subTopic, clientId.c_str());
+
+  Serial.println(subTopic);
 
   // mqtt server and callback function setup
   client.setServer(mqttServer, mqttPort);
@@ -387,13 +389,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
    if (payload[0] == '1'){
     digitalWrite(relay, HIGH);
     Serial.println(" On");
-    client.publish(clientId.c_str(), "RELAY is ON");
+    client.publish("status", "RELAY is ON");
    }
 
    else if (payload[0] == '0'){
     digitalWrite(relay, LOW);
     Serial.println("Off");
-    client.publish(clientId.c_str(), "RELAY is OFF");
+    client.publish("status", "RELAY is OFF");
    }
 
   Serial.println("\n-----------------------");

@@ -18,6 +18,7 @@ const mqttClient = mqtt.connect(
 mqttClient.on("connect", () => {
   console.log("Client connected ");
 });
+// F4:CF:A2:F6:6E:25
 
 const pubTopic = "breez-F4:CF:A2:F6:6E:25";
 mqttClient.subscribe(pubTopic);

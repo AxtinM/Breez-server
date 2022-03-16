@@ -47,7 +47,7 @@ exports.validateUserSignIn = [
     .isEmpty()
     .isEmail()
     .withMessage("Email and/or Password must be Correct!"),
-  check("email")
+  check("password")
     .trim()
     .not()
     .isEmpty()

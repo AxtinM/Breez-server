@@ -20,7 +20,6 @@ const userSchema = new Schema({
     required: true,
   },
   tokens: [{ type: Object }],
-
   devices: [{ type: Object }],
 });
 

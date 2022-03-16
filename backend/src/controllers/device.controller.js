@@ -55,7 +55,6 @@ module.exports.changeDeviceStatus = (req, res) => {
     const { mac, num } = req.body;
     console.log("req : ", mac, " - ", num);
     pubTopic = "change/breez-" + mac;
-
     if (!mqttClient.publish(pubTopic, num)) {
       throw new Error("Publishing Unsucceeded!");
     }
