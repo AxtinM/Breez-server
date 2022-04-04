@@ -386,6 +386,8 @@ void callback(char* topic, byte* payload, unsigned int length) {
     Serial.print((char)payload[i]);
    }
 
+   
+
    if (payload[0] == '1'){
     digitalWrite(relay, HIGH);
     Serial.println(" On");
