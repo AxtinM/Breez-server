@@ -7,7 +7,7 @@ const {
   deleteDevice,
   changeDeviceStatus,
 } = require("../controllers/device.controller");
-const mqttClient = require("../services/mqttClient");
+// const mqttClient = require("../services/mqttClient");
 
 router.get("/all", isAuth, getDevices);
 router.post("/add", isAuth, addDevice);

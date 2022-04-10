@@ -1,8 +1,6 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
-const path = require("path");
-const mongoose = require("mongoose");
 var expressWs = require("express-ws")(app);
 const logger = require("morgan");
 const router = require("./routes");
@@ -17,9 +15,9 @@ const port = process.env.PORT;
 /**
  * App Configuration
  */
-app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(logger("dev"));
 app.use("/api", router);
 
 /**

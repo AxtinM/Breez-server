@@ -4,22 +4,26 @@ const { Schema, model } = mongoose;
 // for use for another time
 
 const breezSchema = new Schema({
-  device_name: {
+  name: {
     type: String,
     required: false,
+    unique: true,
     defualt: "Breez",
   },
-  mac_address: {
+  mac: {
     type: String,
   },
-  device_type: {
+  type: {
     type: String,
     default: "Breez",
   },
   status: {
     type: Boolean,
-    default: 0,
+    default: false,
   },
+  openTimes: [Date],
+  closeTimes: [Date],
+  user: { type: Schema.Types.ObjectId, ref: "User" },
 });
 
 module.exports = model("Breez", breezSchema);

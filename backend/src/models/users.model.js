@@ -20,7 +20,7 @@ const userSchema = new Schema({
     required: true,
   },
   tokens: [{ type: Object }],
-  devices: [{ type: Object }],
+  devices: [{ type: Schema.Types.ObjectId, ref: "Breez" }],
 });
 
 userSchema.pre("save", function (next) {
@@ -29,9 +29,9 @@ userSchema.pre("save", function (next) {
       if (err) return next(err);
 
       this.password = hash;
-      next();
     });
   }
+  next();
 });
 
 userSchema.methods.comparePassword = async function (password) {
